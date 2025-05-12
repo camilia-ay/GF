@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gforce Freight Mel Pickup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <button id="languageToggle" class="language-toggle">中文</button>
+        
+        <h1>Gforce Freight Mel pick up reservation</h1>
+        
+        <form id="reservationForm">
+            <div class="form-group">
+                <label for="name">Receiver Name</label>
+                <input type="text" id="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Contact Number</label>
+                <input type="tel" id="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="order">Order Number</label>
+                <input type="text" id="order" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Pickup Date</label>
+                <input type="date" id="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="time">Pickup Time</label>
+                <select id="time" required>
+                    <!-- Time slots will be populated by JS -->
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
