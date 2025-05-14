@@ -147,6 +147,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             message.remove();
-        }, 3000);
+        }, 10000);
     }
 });
