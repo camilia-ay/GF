@@ -1,49 +1,412 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gforce Freight Mel Pickup</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="api-key" content="sf_fkni2ln3e0kg90364iadmbfd">
+    <meta name="recipient-email" content="your-email@example.com">
+    <title>Gforce Freight Mel Pickup Reservation</title>
+    <!-- jQuery UI Resources -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f6f8fa;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 440px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+            padding: 36px 32px 28px 32px;
+        }
+        #logo {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+            margin: 0 0 28px 0;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: -5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 28px;
+            color: #222;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 500;
+            color: #333;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e0e4ea;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #fafbfc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        select {
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23F7941D" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7.293 7.293a1 1 0 011.414 0L10 8.586l1.293-1.293a1 1 0 111.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px 20px;
+            padding-right: 38px;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #F7941D;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #ffe7ce;
+        }
+        .input-error {
+            border: 1.5px solid #e74c3c !important;
+            background: #fff6f6;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.92em;
+            margin-top: 4px;
+        }
+        .success {
+            color: #F7941D;
+            font-size: 1.05em;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 1.05em;
+            margin-top: 10px;
+            text-align: center;
+        }
+        #submitBtn {
+            width: 100%;
+            background: linear-gradient(90deg, #F7941D 0%, #ffb463 100%);
+            color: #fff;
+            font-size: 1.08rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(247,148,29,0.10);
+        }
+        #submitBtn:hover:not(:disabled) {
+            background: linear-gradient(90deg, #ffb463 0%, #F7941D 100%);
+            box-shadow: 0 4px 16px rgba(247,148,29,0.18);
+        }
+        #submitBtn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        #resultContainer {
+            min-height: 28px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 98vw;
+                padding: 18px 6vw 18px 6vw;
+            }
+            h1 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <button id="languageToggle" class="language-toggle">中文</button>
-        
-        <h1>Gforce Freight Mel pick up reservation</h1>
-        
-        <form id="reservationForm">
+        <img id="logo" src="logo.png" alt="Gforce Freight Logo" class="logo">
+        <h1>Gforce Freight Mel Pick-up Reservation</h1>
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+        <form id="reservationForm" action="https://api.staticforms.xyz/submit" method="post" target="hidden_iframe">
+            <input type="hidden" name="accessKey" value="sf_b8ng44033b1d87ecfmjekf62" />
             <div class="form-group">
-                <label for="name">Receiver Name</label>
-                <input type="text" id="name" required>
+                <label for="receiverName">Receiver Name *</label>
+                <input type="text" id="receiverName" name="name" required data-validation="required" placeholder="Enter receiver name">
             </div>
-            
             <div class="form-group">
-                <label for="phone">Contact Number</label>
-                <input type="tel" id="phone" required>
+                <label for="contactNumber">Contact Number *</label>
+                <input type="tel" id="contactNumber" name="contact" required data-validation="phone" pattern="[0-9]{10,11}" placeholder="Enter contact number">
             </div>
-            
             <div class="form-group">
-                <label for="order">Order Number</label>
-                <input type="text" id="order" required>
+                <label for="orderNumbers">Order Numbers</label>
+                <textarea id="orderNumbers" name="orders" rows="4" placeholder="Please enter order numbers, one per line" data-validation="text"></textarea>
             </div>
-            
             <div class="form-group">
-                <label for="date">Pickup Date</label>
-                <input type="date" id="date" required>
+                <label for="pickupDate">Pickup Date *</label>
+                <input type="text" id="pickupDate" name="pickupDate" required data-validation="date" readonly placeholder="Select pickup date">
             </div>
-            
             <div class="form-group">
-                <label for="time">Pickup Time</label>
-                <select id="time" required>
-                    <!-- Time slots will be populated by JS -->
+                <label for="pickupTime">Pickup Time *</label>
+                <select id="pickupTime" name="pickupTime" required data-validation="select">
+                    <option value="">Select Time Slot</option>
                 </select>
             </div>
-            
-            <button type="submit" class="submit-btn">Submit</button>
+            <button type="submit" id="submitBtn">Submit Reservation</button>
         </form>
+        <div id="resultContainer" aria-live="polite" style="margin-top: 20px;"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 日期验证函数
+        function isDateAvailable(date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // 检查是否是周末
+            const day = date.getDay();
+            if (day === 0 || day === 6) {
+                return [false, 'ui-state-disabled', 'Weekend not available'];
+            }
+            
+            // 检查是否是今天或过去的日期
+            if (date < today) {
+                return [false, 'ui-state-disabled', 'Past date not available'];
+            }
+            
+            return [true, '', ''];
+        }
+
+        // 初始化日期选择器
+        $(document).ready(function() {
+            $('#pickupDate').datepicker({
+                minDate: 1,
+                maxDate: '+1M', // 设置最大日期为一个月后
+                dateFormat: 'yy-mm-dd',
+                beforeShowDay: isDateAvailable,
+                onSelect: function(selectedDate) {
+                    validateTimeSlotAvailability(selectedDate);
+                }
+            });
+        });
+
+        // 验证时段可用性
+        function validateTimeSlotAvailability(selectedDate) {
+            const timeSelect = $('#pickupTime');
+            const selectedTime = timeSelect.val();
+            
+            // 这里可以添加实际的时段验证逻辑
+            // 示例：检查特定日期是否还有可用时段
+            if (selectedDate) {
+                // 模拟API调用检查时段可用性
+                // API CALL PLACEHOLDER
+                console.log(`Checking availability for ${selectedDate}`);
+            }
+        }
+
+        // 格式化时间为两位数
+        function padZero(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        // 生成时间选项
+        function generateTimeSlots() {
+            const timeSelect = document.getElementById('pickupTime');
+            const startHour = 10;
+            const startMinute = 0;
+            const endHour = 16;
+            const endMinute = 30;
+            const interval = 30; // 30分钟间隔
+
+            // 清除现有选项（保留默认选项）
+            while (timeSelect.options.length > 1) {
+                timeSelect.remove(1);
+            }
+
+            let currentHour = startHour;
+            let currentMinute = startMinute;
+
+            while (true) {
+                // 计算结束时间
+                let nextHour = currentHour;
+                let nextMinute = currentMinute + interval;
+                if (nextMinute >= 60) {
+                    nextHour += Math.floor(nextMinute / 60);
+                    nextMinute = nextMinute % 60;
+                }
+
+                // 如果当前时间超过结束时间，则停止
+                if (currentHour > endHour || (currentHour === endHour && currentMinute > endMinute)) {
+                    break;
+                }
+
+                // 格式化时间字符串
+                const startTime = `${padZero(currentHour)}:${padZero(currentMinute)}`;
+                const endTime = `${padZero(nextHour)}:${padZero(nextMinute)}`;
+                const timeSlot = `${startTime} - ${endTime}`;
+
+                // 创建选项
+                const option = document.createElement('option');
+                option.value = timeSlot;
+                option.textContent = timeSlot;
+                timeSelect.appendChild(option);
+
+                // 更新时间
+                currentHour = nextHour;
+                currentMinute = nextMinute;
+            }
+        }
+
+        // 页面加载时生成时间选项
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTimeSlots();
+        });
+
+        // 辅助函数：显示/隐藏错误
+        function showError(input, message) {
+            input.classList.add('input-error');
+            let err = input.parentNode.querySelector('.error-msg');
+            if (!err) {
+                err = document.createElement('div');
+                err.className = 'error-msg';
+                input.parentNode.appendChild(err);
+            }
+            err.textContent = message;
+        }
+        function clearError(input) {
+            input.classList.remove('input-error');
+            let err = input.parentNode.querySelector('.error-msg');
+            if (err) err.remove();
+        }
+
+        // 验证规则实现
+        function validateName(name) {
+            return name.trim().length >= 2 && name.trim().length <= 50;
+        }
+        function validatePhone(num) {
+            return /^\d+$/.test(num.trim()) && num.trim().length > 0;
+        }
+        function validateOrderNumbers(textarea) {
+            const orders = textarea.value.split('\n')
+                .map(v => v.trim())
+                .filter(v => v.length > 0);
+            return orders.length >= 1;
+        }
+        function validateDate(val) {
+            return val && val.trim().length > 0;
+        }
+        function validateTime(val) {
+            return val && val.trim().length > 0;
+        }
+
+        // 绑定实时验证
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.getElementById('receiverName');
+            const phoneInput = document.getElementById('contactNumber');
+            const orderTextarea = document.getElementById('orderNumbers');
+            const dateInput = document.getElementById('pickupDate');
+            const timeSelect = document.getElementById('pickupTime');
+
+            nameInput.addEventListener('input', function() {
+                if (!validateName(nameInput.value)) {
+                    showError(nameInput, 'Name must be 2-50 characters.');
+                } else {
+                    clearError(nameInput);
+                }
+            });
+            phoneInput.addEventListener('input', function() {
+                if (!validatePhone(phoneInput.value)) {
+                    showError(phoneInput, 'Contact number is required and must be digits only.');
+                } else {
+                    clearError(phoneInput);
+                }
+            });
+            orderTextarea.addEventListener('input', function() {
+                if (!validateOrderNumbers(orderTextarea)) {
+                    showError(orderTextarea, 'Please enter at least one valid order number.');
+                } else {
+                    clearError(orderTextarea);
+                }
+            });
+            dateInput.addEventListener('change', function() {
+                if (!validateDate(dateInput.value)) {
+                    showError(dateInput, 'Please select a pickup date.');
+                } else {
+                    clearError(dateInput);
+                }
+            });
+            timeSelect.addEventListener('change', function() {
+                if (!validateTime(timeSelect.value)) {
+                    showError(timeSelect, 'Please select a pickup time slot.');
+                } else {
+                    clearError(timeSelect);
+                }
+            });
+        });
+
+        // 修改提交事件：验证不通过时阻止提交，通过时允许表单自然提交
+        document.getElementById('reservationForm').addEventListener('submit', function(e) {
+            const nameInput = document.getElementById('receiverName');
+            const phoneInput = document.getElementById('contactNumber');
+            const orderTextarea = document.getElementById('orderNumbers');
+            const dateInput = document.getElementById('pickupDate');
+            const timeSelect = document.getElementById('pickupTime');
+            let valid = true;
+            if (!validateName(nameInput.value)) {
+                showError(nameInput, 'Name must be 2-50 characters.');
+                valid = false;
+            } else {
+                clearError(nameInput);
+            }
+            if (!validatePhone(phoneInput.value)) {
+                showError(phoneInput, 'Contact number is required and must be digits only.');
+                valid = false;
+            } else {
+                clearError(phoneInput);
+            }
+            if (!validateOrderNumbers(orderTextarea)) {
+                showError(orderTextarea, 'Please enter at least one valid order number.');
+                valid = false;
+            } else {
+                clearError(orderTextarea);
+            }
+            if (!validateDate(dateInput.value)) {
+                showError(dateInput, 'Please select a pickup date.');
+                valid = false;
+            } else {
+                clearError(dateInput);
+            }
+            if (!validateTime(timeSelect.value)) {
+                showError(timeSelect, 'Please select a pickup time slot.');
+                valid = false;
+            } else {
+                clearError(timeSelect);
+            }
+            if (!valid) {
+                e.preventDefault();
+            }
+        });
+
+        // 监听iframe load事件，显示提示
+        document.getElementById('hidden_iframe').addEventListener('load', function() {
+            document.getElementById('resultContainer').innerHTML = '<p class="success">Reservation submitted successfully!</p>';
+            document.getElementById('reservationForm').reset();
+        });
+    </script>
 </body>
-</html>
+</html> 
