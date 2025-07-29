@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="api-key" content="sf_fkni2ln3e0kg90364iadmbfd">
     <meta name="recipient-email" content="your-email@example.com">
-    <title>Gforce Freight Mel Pick-up Reservation</title>
+    <title>Gforce Freight Mel Pickup Reservation</title>
     <!-- jQuery UI Resources -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -227,10 +227,10 @@
         // 生成时间选项
         function generateTimeSlots() {
             const timeSelect = document.getElementById('pickupTime');
-            const startHour = 9;
-            const startMinute = 30;
-            const endHour = 17;
-            const endMinute = 0;
+            const startHour = 10;
+            const startMinute = 0;
+            const endHour = 16;
+            const endMinute = 30;
             const interval = 30; // 30分钟间隔
 
             // 清除现有选项（保留默认选项）
@@ -250,8 +250,8 @@
                     nextMinute = nextMinute % 60;
                 }
 
-                // 如果结束时间超过17:00，则停止
-                if (nextHour > endHour || (nextHour === endHour && nextMinute > endMinute)) {
+                // 如果当前时间超过结束时间，则停止
+                if (currentHour > endHour || (currentHour === endHour && currentMinute > endMinute)) {
                     break;
                 }
 
