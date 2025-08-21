@@ -200,6 +200,8 @@
                 dateFormat: 'yy-mm-dd',
                 beforeShowDay: isDateAvailable,
                 onSelect: function(selectedDate) {
+                    // 重新生成对应日期的时间段
+                    generateTimeSlots(new Date(selectedDate));
                     validateTimeSlotAvailability(selectedDate);
                 }
             });
@@ -225,12 +227,28 @@
         }
 
         // 生成时间选项
-        function generateTimeSlots() {
+        function generateTimeSlots(selectedDate = null) {
             const timeSelect = document.getElementById('pickupTime');
-            const startHour = 10;
-            const startMinute = 0;
-            const endHour = 16;
-            const endMinute = 30;
+            
+            // 判断是否为周四
+            const isThursday = selectedDate && selectedDate.getDay() === 4;
+            
+            let startHour, startMinute, endHour, endMinute;
+            
+            if (isThursday) {
+                // 周四：13:00-16:30
+                startHour = 13;
+                startMinute = 0;
+                endHour = 16;
+                endMinute = 30;
+            } else {
+                // 其他工作日：10:00-16:30
+                startHour = 10;
+                startMinute = 0;
+                endHour = 16;
+                endMinute = 30;
+            }
+            
             const interval = 30; // 30分钟间隔
 
             // 清除现有选项（保留默认选项）
@@ -274,7 +292,7 @@
 
         // 页面加载时生成时间选项
         document.addEventListener('DOMContentLoaded', function() {
-            generateTimeSlots();
+            generateTimeSlots(new Date());
         });
 
         // 辅助函数：显示/隐藏错误
